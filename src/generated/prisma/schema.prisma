@@ -1,0 +1,185 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum Plan {
+  FREE
+  BASIC
+  PREMIUM
+}
+
+model User {
+  id            String   @id @default(cuid())
+  name          String
+  email         String   @unique
+  password      String
+  role          Role     @default(USER)
+  plan          Plan     @default(FREE)
+  emailUsed     Int      @default(0)
+  smsUsed       Int      @default(0)
+  planStartDate DateTime @default(now())
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  notifications Notification[]
+  templates     Template[]
+  apiKeys       ApiKey[]
+  invites       Invite[]
+  teamMembers   TeamMember[]
+  settings      Settings?
+  payments      Payment[]
+
+  @@map("users")
+}
+
+model Notification {
+  id               String    @id @default(cuid())
+  type             String
+  recipient        String
+  subject          String?
+  message          String?
+  templateId       String?
+  templateName     String?
+  variables        Json?     @default("{}")
+  status           String    @default("queued")
+  priority         String    @default("normal")
+  attempts         Int       @default(0)
+  error            String?
+  tags             String[]  @default([])
+  sentAt           DateTime?
+  deliveredAt      DateTime?
+  deliveryTimeline Json?     @default("[]")
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  // Relations
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  @@map("notifications")
+}
+
+model Template {
+  id         String   @id @default(cuid())
+  name       String
+  type       String
+  subject    String?
+  content    String
+  variables  Json?    @default("[]")
+  usageCount Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  @@map("templates")
+}
+
+model ApiKey {
+  id          String    @id @default(cuid())
+  name        String
+  key         String    @unique
+  permissions String[]  @default(["send", "read"])
+  isActive    Boolean   @default(true)
+  lastUsedAt  DateTime?
+  usageCount  Int       @default(0)
+  createdAt   DateTime  @default(now())
+
+  // Relations
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  @@map("api_keys")
+}
+
+model TeamMember {
+  id          String   @id @default(cuid())
+  name        String
+  email       String   @unique
+  role        String   @default("developer")
+  avatarColor String   @default("#6366f1")
+  joinedAt    DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  @@map("team_members")
+}
+
+model Invite {
+  id     String   @id @default(cuid())
+  email  String   @unique
+  role   String   @default("developer")
+  sentAt DateTime @default(now())
+
+  // Relations
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  @@map("invites")
+}
+
+model Settings {
+  id            String   @id @default(cuid())
+  orgName       String   @default("NotifyHub")
+  timezone      String   @default("UTC")
+  retryEnabled  Boolean  @default(true)
+  maxRetries    Int      @default(3)
+  webhookUrl    String   @default("")
+  emailProvider String   @default("smtp")
+  emailConfig   Json?    @default("{}")
+  smsProvider   String   @default("twilio")
+  smsConfig     Json?    @default("{}")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
+
+  @@map("settings")
+}
+
+model Payment {
+  id            String    @id @default(cuid())
+  amount        Float
+  currency      String    @default("USD")
+  status        String    @default("pending") // pending, processing, completed, failed, refunded
+  paymentMethod String    @default("card") // card, bank_transfer
+  cardLast4     String?
+  cardBrand     String? // visa, mastercard, amex, discover
+  description   String?
+  plan          String? // FREE, BASIC, PREMIUM - if it's a plan upgrade payment
+  billingName   String?
+  billingEmail  String?
+  transactionId String?   @unique
+  receiptUrl    String?
+  failureReason String?
+  refundedAt    DateTime?
+  processedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  @@map("payments")
+}

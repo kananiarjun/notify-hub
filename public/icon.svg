@@ -1,0 +1,20 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <!-- Background -->
+  <rect width="200" height="200" rx="40" fill="#2563EB"/>
+
+  <!-- Bell -->
+  <path d="M100 60C85 60 75 72 75 90V110L65 125H135L125 110V90C125 72 115 60 100 60Z" fill="white"/>
+  <circle cx="100" cy="132" r="7" fill="white"/>
+
+  <!-- Hub Connection Dots -->
+  <circle cx="45" cy="45" r="8" fill="#60A5FA"/>
+  <circle cx="155" cy="45" r="8" fill="#60A5FA"/>
+  <circle cx="45" cy="155" r="8" fill="#60A5FA"/>
+  <circle cx="155" cy="155" r="8" fill="#60A5FA"/>
+
+  <!-- Connection Lines -->
+  <line x1="45" y1="45" x2="100" y2="60" stroke="#60A5FA" stroke-width="3"/>
+  <line x1="155" y1="45" x2="100" y2="60" stroke="#60A5FA" stroke-width="3"/>
+  <line x1="45" y1="155" x2="100" y2="125" stroke="#60A5FA" stroke-width="3"/>
+  <line x1="155" y1="155" x2="100" y2="125" stroke="#60A5FA" stroke-width="3"/>
+</svg>
