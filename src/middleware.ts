@@ -2,36 +2,60 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
+// Dashboard routes that require authentication
+const protectedRoutes = [
+  "/",
+  "/admin",
+  "/analytics",
+  "/email-logs",
+  "/payments",
+  "/pricing",
+  "/send",
+  "/settings",
+  "/sms-logs",
+  "/templates",
+];
+
+// Auth routes accessible only when NOT authenticated
+const authRoutes = ["/login", "/register"];
+
+function isProtectedRoute(pathname: string): boolean {
+  return protectedRoutes.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`)
+  );
+}
+
+function isAuthRoute(pathname: string): boolean {
+  return authRoutes.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`)
+  );
+}
+
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  
-  // Skip middleware for auth pages during development if no secret is set
-  if (!process.env.NEXTAUTH_SECRET && (pathname === "/login" || pathname === "/register")) {
-    return NextResponse.next();
-  }
-  
+
   // Get the token from the request
-  const token = await getToken({ 
-    req, 
+  const token = await getToken({
+    req,
     secret: process.env.NEXTAUTH_SECRET,
-    secureCookie: process.env.NODE_ENV === 'production'
+    secureCookie: process.env.NODE_ENV === "production",
   });
 
   const isAuthenticated = !!token;
 
-  // Allow access to auth pages
-  if (pathname === "/login" || pathname === "/register") {
+  // Redirect authenticated users away from auth pages to dashboard
+  if (isAuthRoute(pathname)) {
     if (isAuthenticated) {
       return NextResponse.redirect(new URL("/", req.url));
     }
     return NextResponse.next();
   }
 
-  // Protect all other routes - but allow access if no secret is set (development)
-  if (!process.env.NEXTAUTH_SECRET || !isAuthenticated) {
-    if (pathname !== "/") {
-      return NextResponse.redirect(new URL("/login", req.url));
-    }
+  // Protect dashboard routes — redirect unauthenticated users to login
+  if (isProtectedRoute(pathname) && !isAuthenticated) {
+    const loginUrl = new URL("/login", req.url);
+    loginUrl.searchParams.set("callbackUrl", pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
   return NextResponse.next();
