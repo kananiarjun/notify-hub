@@ -41,7 +41,7 @@ const PLANS: Plan[] = [
   {
     name: "BASIC",
     id: "BASIC",
-    price: "29",
+    price: "999",
     desc: "Growing operations",
     features: ["10,000 emails per month", "1,000 SMS messages", "Advanced analytics", "Priority support", "Custom templates"],
     icon: Sparkles,
@@ -53,7 +53,7 @@ const PLANS: Plan[] = [
   {
     name: "PREMIUM",
     id: "PREMIUM",
-    price: "99",
+    price: "4990",
     desc: "Enterprise scale",
     features: ["Unlimited emails", "Unlimited SMS messages", "Real-time analytics", "24/7 dedicated support", "Multiple team seats", "API white-labeling"],
     icon: Crown,
@@ -155,7 +155,7 @@ export default function PricingPage() {
                 <div className="space-y-3 mb-12">
                   <h3 className="text-sm font-black uppercase tracking-[0.4em] text-muted-foreground/60">{plan.name} MANIFEST</h3>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-6xl font-black text-foreground tracking-tighter">${plan.price}</span>
+                    <span className="text-6xl font-black text-foreground tracking-tighter">₹{plan.price}</span>
                     <span className="text-muted-foreground font-black text-xs uppercase tracking-widest opacity-40">/ PER CYCLE</span>
                   </div>
                   <p className="text-sm text-muted-foreground font-bold leading-relaxed pt-4 border-t border-border/50">{plan.desc}</p>
@@ -220,45 +220,6 @@ export default function PricingPage() {
           </DialogContent>
         </Dialog>
 
-        <div className="relative group max-w-6xl mx-auto px-4 lg:px-0">
-           <div className="absolute inset-0 bg-primary/5 blur-[100px] rounded-[4rem] group-hover:bg-primary/10 transition-all pointer-events-none" />
-           <div className="relative bg-card/60 backdrop-blur-2xl border border-border rounded-[4rem] p-12 lg:p-16 flex flex-col md:flex-row items-center justify-between gap-12 overflow-hidden shadow-2xl">
-              <div className="absolute top-0 right-0 p-12 opacity-[0.03] rotate-12 group-hover:rotate-0 transition-transform duration-1000 pointer-events-none">
-                 <Crown className="w-64 h-64 text-primary" />
-              </div>
-              
-              <div className="space-y-4 text-center md:text-left relative z-10 max-w-xl">
-                 <div className="flex items-center gap-3 justify-center md:justify-start">
-                    <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
-                       <ShieldCheck className="w-6 h-6" />
-                    </div>
-                    <h3 className="text-3xl font-black text-foreground tracking-tight">Enterprise Infrastructure</h3>
-                 </div>
-                 <p className="text-muted-foreground font-medium text-lg leading-relaxed">
-                    Custom volume requirements, dedicated dispatch nodes, or full white-labeling orchestration. Our enterprise deck offers unparalleled flexibility.
-                 </p>
-                 <div className="flex items-center gap-6 pt-4">
-                    <div className="flex items-center gap-2">
-                       <Activity className="w-4 h-4 text-emerald-500" />
-                       <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">99.99% Node Uptime</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                       <Shield className="w-4 h-4 text-primary" />
-                       <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Dedicated Support</span>
-                    </div>
-                 </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row items-center gap-4 relative z-10">
-                 <Button size="lg" className="rounded-[2rem] px-12 h-16 text-sm font-black uppercase tracking-[0.2em] shadow-2xl shadow-primary/20 hover:scale-105 transition-all">
-                    Consult Expert
-                 </Button>
-                 <Button variant="outline" size="lg" className="rounded-[2rem] px-12 h-16 text-sm font-black uppercase tracking-[0.2em] border-2 border-border/50 hover:bg-secondary transition-all">
-                    Full Spec Sheet
-                 </Button>
-              </div>
-           </div>
-        </div>
       </div>
     </PageWrapper>
   );

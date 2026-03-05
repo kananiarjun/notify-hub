@@ -3,7 +3,7 @@ import nodemailer from "nodemailer";
 import twilio from "twilio";
 import { json, error, serialize } from "@/app/api/_helpers";
 import { getCollection } from "@/lib/mongodb";
-import type { Notification, Template } from "@/lib/schema";
+import type { SmsLog, EmailLog, Template } from "@/lib/schema";
 import { randomUUID } from "crypto";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -93,30 +93,61 @@ export async function POST(req: NextRequest) {
     }
 
     /* ── create notification record (db) ── */
-    const notifications = await getCollection<Notification>("notifications");
+    const collectionName = type === "email" ? "email_logs" : "sms_logs";
+    const logs = type === "email" 
+      ? await getCollection<EmailLog>(collectionName)
+      : await getCollection<SmsLog>(collectionName);
     const now = new Date();
-    const notification: Notification = {
-      id: randomUUID(),
-      type,
-      recipient,
-      subject: finalSubject,
-      message: finalMessage,
-      templateId,
-      templateName,
-      variables,
-      status: "processing",
-      priority,
-      attempts: 1,
-      tags,
-      deliveryTimeline: [
-        { status: "queued", timestamp: now, details: "Notification queued" },
-        { status: "processing", timestamp: now, details: "Sending…" },
-      ],
-      createdAt: now,
-      updatedAt: now,
-      userId: session.user.id,
-    };
-    await notifications.insertOne(notification);
+    
+    if (type === "email") {
+      const emailLog: EmailLog = {
+        id: randomUUID(),
+        recipient,
+        subject: finalSubject,
+        message: finalMessage,
+        templateId,
+        templateName,
+        variables,
+        status: "processing",
+        priority,
+        attempts: 1,
+        tags,
+        deliveryTimeline: [
+          { status: "queued", timestamp: now, details: "Email queued" },
+          { status: "processing", timestamp: now, details: "Sending…" },
+        ],
+        createdAt: now,
+        updatedAt: now,
+        userId: session.user.id,
+      };
+      await logs.insertOne(emailLog);
+    } else {
+      const smsLog: SmsLog = {
+        id: randomUUID(),
+        recipient,
+        message: finalMessage,
+        templateId,
+        templateName,
+        variables,
+        status: "processing",
+        priority,
+        attempts: 1,
+        tags,
+        deliveryTimeline: [
+          { status: "queued", timestamp: now, details: "SMS queued" },
+          { status: "processing", timestamp: now, details: "Sending…" },
+        ],
+        createdAt: now,
+        updatedAt: now,
+        userId: session.user.id,
+      };
+      await logs.insertOne(smsLog);
+    }
+
+    // Get the created log for updates
+    const log = type === "email"
+      ? await (await getCollection<EmailLog>(collectionName)).findOne({ userId: session.user.id }, { sort: { createdAt: -1 } })
+      : await (await getCollection<SmsLog>(collectionName)).findOne({ userId: session.user.id }, { sort: { createdAt: -1 } });
 
     /* ── actually send ── */
     try {
@@ -137,16 +168,19 @@ export async function POST(req: NextRequest) {
         });
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const timeline = (notification.deliveryTimeline as unknown as any[]) || [];
+      // Update delivered status
+      const timeline = (log?.deliveryTimeline as unknown as any[]) || [];
       timeline.push({
         status: "delivered",
         timestamp: new Date(),
         message: `${type === "email" ? "Email" : "SMS"} delivered successfully`,
       });
 
-      await notifications.updateOne(
-        { id: notification.id, userId: session.user.id },
+      const logsCollection = type === "email" 
+        ? await getCollection<EmailLog>(collectionName)
+        : await getCollection<SmsLog>(collectionName);
+      await logsCollection.updateOne(
+        { id: log?.id, userId: session.user.id },
         {
           $set: {
             status: "delivered",
@@ -158,7 +192,7 @@ export async function POST(req: NextRequest) {
           },
         }
       );
-      const updated = await notifications.findOne({ id: notification.id, userId: session.user.id });
+      const updated = await logsCollection.findOne({ id: log?.id, userId: session.user.id });
 
       if (!updated) {
         return error("Failed to update notification", 500);
@@ -166,19 +200,21 @@ export async function POST(req: NextRequest) {
 
       return json(serialize(updated), 200);
     } catch (sendErr: unknown) {
-      /* mark failed */
+      // Update failed status
       const errMsg = sendErr instanceof Error ? sendErr.message : String(sendErr);
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const timeline = (notification.deliveryTimeline as unknown as any[]) || [];
+      const timeline = (log?.deliveryTimeline as unknown as any[]) || [];
       timeline.push({
         status: "failed",
         timestamp: new Date(),
         message: errMsg,
       });
 
-      await notifications.updateOne(
-        { id: notification.id, userId: session.user.id },
+      const logsCollection = type === "email" 
+        ? await getCollection<EmailLog>(collectionName)
+        : await getCollection<SmsLog>(collectionName);
+      await logsCollection.updateOne(
+        { id: log?.id, userId: session.user.id },
         {
           $set: {
             status: "failed",
@@ -189,7 +225,7 @@ export async function POST(req: NextRequest) {
           },
         }
       );
-      const updated = await notifications.findOne({ id: notification.id, userId: session.user.id });
+      const updated = await logsCollection.findOne({ id: log?.id, userId: session.user.id });
 
       if (!updated) {
         return error("Failed to update notification", 500);

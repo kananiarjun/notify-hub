@@ -143,10 +143,10 @@ export function NotificationLogs({ type, title, icon: Icon }: NotificationLogsPr
           limit: "10000",
           page: "1",
         });
-        
+
         const response = await fetch(`/api/notifications?${params}`);
         const data = await response.json();
-        
+
         if (!data.notifications || data.notifications.length === 0) {
           toast({ title: "Manifest Empty", description: "No notifications found for export manifest.", variant: "destructive" });
           return;
@@ -168,7 +168,7 @@ export function NotificationLogs({ type, title, icon: Icon }: NotificationLogsPr
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        
+
         toast({ title: "Export Complete", description: `Manifest generated with ${data.notifications.length} records.` });
       } catch {
         toast({ title: "Export Failed", description: "Failed to generate CSV manifest.", variant: "destructive" });
@@ -195,7 +195,7 @@ export function NotificationLogs({ type, title, icon: Icon }: NotificationLogsPr
             </div>
           </div>
           <div className="flex gap-3">
-             <Button variant="outline" className="rounded-2xl h-11 px-5 font-bold border-border bg-card/50" onClick={handleRefresh} disabled={refreshing}>
+            <Button variant="outline" className="rounded-2xl h-11 px-5 font-bold border-border bg-card/50" onClick={handleRefresh} disabled={refreshing}>
               <RefreshCw className={cn("w-4 h-4 mr-2", refreshing && "animate-spin")} />
               {refreshing ? "Syncing..." : "Sync Logs"}
             </Button>
@@ -207,44 +207,44 @@ export function NotificationLogs({ type, title, icon: Icon }: NotificationLogsPr
 
         {/* Improved Filter Bar */}
         <div className="bg-card/30 backdrop-blur-md border border-border rounded-[2.5rem] p-6 shadow-sm space-y-6">
-           <div className="flex flex-col lg:flex-row gap-6">
-              <div className="relative flex-1 group">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                <Input
-                  value={search}
-                  onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                  placeholder="Master search: Recipient, Subject, or Record ID..."
-                  className="pl-12 h-12 rounded-2xl border-border bg-background/50 focus-visible:ring-primary font-bold shadow-inner"
-                />
-              </div>
-              <div className="flex items-center p-1.5 bg-secondary/50 border border-border/50 rounded-2xl gap-1">
-                {statusFilters.map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => { setStatusFilter(s); setPage(1); }}
-                    className={cn(
-                      "px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
-                      statusFilter === s
-                        ? "bg-background text-primary shadow-sm scale-105"
-                        : "text-muted-foreground hover:text-foreground"
-                    )}
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
-           </div>
+          <div className="flex flex-col lg:flex-row gap-6">
+            <div className="relative flex-1 group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+              <Input
+                value={search}
+                onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                placeholder="Master search: Recipient, Subject, or Record ID..."
+                className="pl-12 h-12 rounded-2xl border-border bg-background/50 focus-visible:ring-primary font-bold shadow-inner"
+              />
+            </div>
+            <div className="flex items-center p-1.5 bg-secondary/50 border border-border/50 rounded-2xl gap-1">
+              {statusFilters.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => { setStatusFilter(s); setPage(1); }}
+                  className={cn(
+                    "px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                    statusFilter === s
+                      ? "bg-background text-primary shadow-sm scale-105"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Advanced Table Container */}
         <div className="bg-card border border-border rounded-[2.5rem] shadow-sm overflow-hidden relative min-h-[400px]">
           {loading && (
-             <div className="absolute inset-0 bg-background/40 backdrop-blur-sm z-50 flex flex-col items-center justify-center gap-4">
-                <div className="p-4 rounded-[2rem] bg-card border border-border shadow-2xl">
-                   <Loader2 className="w-10 h-10 text-primary animate-spin" />
-                </div>
-                <p className="text-xs font-black uppercase tracking-widest text-muted-foreground animate-pulse">Scanning Archives...</p>
-             </div>
+            <div className="absolute inset-0 bg-background/40 backdrop-blur-sm z-50 flex flex-col items-center justify-center gap-4">
+              <div className="p-4 rounded-[2rem] bg-card border border-border shadow-2xl">
+                <Loader2 className="w-10 h-10 text-primary animate-spin" />
+              </div>
+              <p className="text-xs font-black uppercase tracking-widest text-muted-foreground animate-pulse">Scanning Archives...</p>
+            </div>
           )}
 
           <div className="overflow-x-auto scrollbar-thin">
@@ -288,15 +288,15 @@ export function NotificationLogs({ type, title, icon: Icon }: NotificationLogsPr
                         </td>
                         <td className="px-4 py-4" onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center gap-3">
-                             <div className={cn(
-                               "w-8 h-8 rounded-xl flex items-center justify-center",
-                               n.status === "delivered" ? "bg-emerald-500/10 text-emerald-500" :
-                               n.status === "failed" ? "bg-destructive/10 text-destructive" :
-                               "bg-primary/10 text-primary"
-                             )}>
-                               {n.type === "email" ? <Mail className="w-4 h-4" /> : <MessageSquare className="w-4 h-4" />}
-                             </div>
-                             <Tooltip>
+                            <div className={cn(
+                              "w-8 h-8 rounded-xl flex items-center justify-center",
+                              n.status === "delivered" ? "bg-emerald-500/10 text-emerald-500" :
+                                n.status === "failed" ? "bg-destructive/10 text-destructive" :
+                                  "bg-primary/10 text-primary"
+                            )}>
+                              {n.type === "email" ? <Mail className="w-4 h-4" /> : <MessageSquare className="w-4 h-4" />}
+                            </div>
+                            <Tooltip>
                               <TooltipTrigger asChild>
                                 <button
                                   className="font-mono text-xs font-bold text-muted-foreground hover:text-primary transition-all flex items-center gap-1.5"
@@ -311,10 +311,10 @@ export function NotificationLogs({ type, title, icon: Icon }: NotificationLogsPr
                           </div>
                         </td>
                         <td className="px-4 py-4 min-w-[200px]">
-                           <div className="space-y-1">
-                              <p className="text-sm font-bold text-foreground leading-tight">{truncate(n.recipient, 30)}</p>
-                              <p className="text-xs text-muted-foreground/70 leading-tight italic">{truncate(n.subject || n.message || "No content summary available", 45)}</p>
-                           </div>
+                          <div className="space-y-1">
+                            <p className="text-sm font-bold text-foreground leading-tight">{truncate(n.recipient, 30)}</p>
+                            <p className="text-xs text-muted-foreground/70 leading-tight italic">{truncate(n.subject || n.message || "No content summary available", 45)}</p>
+                          </div>
                         </td>
                         <td className="px-4 py-4">
                           {n.templateName ? (
@@ -327,9 +327,9 @@ export function NotificationLogs({ type, title, icon: Icon }: NotificationLogsPr
                           <Badge variant={statusBadgeVariant[n.status]} className="gap-2 px-3 py-1 font-black uppercase text-[9px] tracking-wider rounded-lg shadow-sm">
                             <span className={cn(
                               "w-1.5 h-1.5 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.1)]",
-                              n.status === "delivered" ? "bg-emerald-400" : 
-                              n.status === "failed" ? "bg-red-400" : 
-                              n.status === "queued" ? "bg-amber-400" : "bg-blue-400",
+                              n.status === "delivered" ? "bg-emerald-400" :
+                                n.status === "failed" ? "bg-red-400" :
+                                  n.status === "queued" ? "bg-amber-400" : "bg-blue-400",
                               (n.status === "processing" || n.status === "queued") && "animate-pulse"
                             )} />
                             {n.status}
@@ -337,14 +337,14 @@ export function NotificationLogs({ type, title, icon: Icon }: NotificationLogsPr
                         </td>
                         <td className="px-4 py-4 text-right pr-10" onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center justify-end gap-6">
-                             <Tooltip>
-                                <TooltipTrigger className="text-[10px] font-bold text-muted-foreground opacity-60 group-hover:opacity-100 transition-opacity uppercase tracking-tighter">
-                                   {formatRelativeTime(n.createdAt)}
-                                </TooltipTrigger>
-                                <TooltipContent className="rounded-xl text-[10px] font-bold">{new Date(n.createdAt).toLocaleString()}</TooltipContent>
-                             </Tooltip>
-                             
-                             <DropdownMenu>
+                            <Tooltip>
+                              <TooltipTrigger className="text-[10px] font-bold text-muted-foreground opacity-60 group-hover:opacity-100 transition-opacity uppercase tracking-tighter">
+                                {formatRelativeTime(n.createdAt)}
+                              </TooltipTrigger>
+                              <TooltipContent className="rounded-xl text-[10px] font-bold">{new Date(n.createdAt).toLocaleString()}</TooltipContent>
+                            </Tooltip>
+
+                            <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-primary/10 hover:text-primary transition-all">
                                   <MoreHorizontal className="w-5 h-5" />
@@ -388,11 +388,11 @@ export function NotificationLogs({ type, title, icon: Icon }: NotificationLogsPr
           <div className="flex flex-col sm:flex-row items-center justify-between px-8 py-6 bg-secondary/5 border-t border-border/50 gap-4">
             <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Manifest range: {(page - 1) * perPage + 1} - {Math.min(page * perPage, total)} of {total}</div>
             <div className="flex items-center gap-2">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="h-10 rounded-xl px-4 border-border font-bold gap-2 hover:bg-card active:scale-95 transition-all" 
-                onClick={() => setPage(Math.max(1, page - 1))} 
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-10 rounded-xl px-4 border-border font-bold gap-2 hover:bg-card active:scale-95 transition-all"
+                onClick={() => setPage(Math.max(1, page - 1))}
                 disabled={page === 1}
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -400,10 +400,10 @@ export function NotificationLogs({ type, title, icon: Icon }: NotificationLogsPr
               </Button>
               <div className="flex items-center gap-1 hidden md:flex">
                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                   let p = i + 1;
-                   if (totalPages > 5 && page > 3) p = page - 3 + i + 1;
-                   if (p > totalPages) return null;
-                   return (
+                  let p = i + 1;
+                  if (totalPages > 5 && page > 3) p = page - 3 + i + 1;
+                  if (p > totalPages) return null;
+                  return (
                     <Button
                       key={p}
                       variant={p === page ? "default" : "ghost"}
@@ -416,11 +416,11 @@ export function NotificationLogs({ type, title, icon: Icon }: NotificationLogsPr
                   );
                 })}
               </div>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="h-10 rounded-xl px-4 border-border font-bold gap-2 hover:bg-card active:scale-95 transition-all" 
-                onClick={() => setPage(Math.min(totalPages, page + 1))} 
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-10 rounded-xl px-4 border-border font-bold gap-2 hover:bg-card active:scale-95 transition-all"
+                onClick={() => setPage(Math.min(totalPages, page + 1))}
                 disabled={page === totalPages || totalPages === 0}
               >
                 Next
@@ -452,7 +452,7 @@ export function NotificationLogs({ type, title, icon: Icon }: NotificationLogsPr
                   <Trash2 className="w-4 h-4" /> Scrub Archives
                 </Button>
               </div>
-              <button 
+              <button
                 onClick={() => setSelectedRows(new Set())}
                 className="ml-2 p-2 rounded-full hover:bg-secondary/50 transition-colors"
                 title="Deselect all"
@@ -465,29 +465,29 @@ export function NotificationLogs({ type, title, icon: Icon }: NotificationLogsPr
 
         {/* Luxury Detail Sheet */}
         <Sheet open={!!sheetNotification} onOpenChange={() => setSheetNotification(null)}>
-          <SheetContent className="overflow-y-auto sm:max-w-xl rounded-l-[3rem] border-border shadow-2xl p-0">
+          <SheetContent className="sm:max-w-xl rounded-l-[3rem] border-border shadow-2xl p-0 flex flex-col">
             <VisuallyHidden>
               <SheetTitle>Notification Details</SheetTitle>
               <SheetDescription>Detailed information about the selected notification.</SheetDescription>
             </VisuallyHidden>
             {sheetNotification && (
-              <div className="flex flex-col h-full bg-card">
-                <div className="relative h-48 flex items-center justify-center overflow-hidden bg-primary/10 border-b border-primary/5">
-                   <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent pointer-events-none" />
-                   <div className="absolute top-0 right-0 p-10 opacity-10">
-                      <History className="w-40 h-40 text-primary" />
-                   </div>
-                   <div className="z-10 flex flex-col items-center gap-3">
-                      <div className="p-4 rounded-3xl bg-background shadow-xl border border-border/50 scale-110">
-                         {sheetNotification.type === "email" ? <Mail className="w-10 h-10 text-primary" /> : <MessageSquare className="w-10 h-10 text-primary" />}
-                      </div>
-                      <Badge variant={statusBadgeVariant[sheetNotification.status]} className="px-5 py-1.5 font-black uppercase tracking-widest text-[9px] shadow-lg">
-                        {sheetNotification.status}
-                      </Badge>
-                   </div>
+              <div className="flex flex-col h-full bg-card flex-1 min-h-0">
+                <div className="relative h-48 shrink-0 flex items-center justify-center overflow-hidden bg-primary/10 border-b border-primary/5">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent pointer-events-none" />
+                  <div className="absolute top-0 right-0 p-10 opacity-10">
+                    <History className="w-40 h-40 text-primary" />
+                  </div>
+                  <div className="z-10 flex flex-col items-center gap-3">
+                    <div className="p-4 rounded-3xl bg-background shadow-xl border border-border/50 scale-110">
+                      {sheetNotification.type === "email" ? <Mail className="w-10 h-10 text-primary" /> : <MessageSquare className="w-10 h-10 text-primary" />}
+                    </div>
+                    <Badge variant={statusBadgeVariant[sheetNotification.status]} className="px-5 py-1.5 font-black uppercase tracking-widest text-[9px] shadow-lg">
+                      {sheetNotification.status}
+                    </Badge>
+                  </div>
                 </div>
 
-                <div className="p-10 space-y-10">
+                <div className="p-10 space-y-10 overflow-y-auto flex-1">
                   <div className="space-y-6">
                     <div className="flex items-center gap-3 border-b border-border pb-4">
                       <ShieldCheck className="w-5 h-5 text-primary" />
@@ -536,8 +536,8 @@ export function NotificationLogs({ type, title, icon: Icon }: NotificationLogsPr
                               <div className={cn(
                                 "absolute -left-[45px] top-0 w-8 h-8 rounded-xl flex items-center justify-center shadow-lg border-2 border-card",
                                 entry.status === "delivered" ? "bg-emerald-500 text-white" :
-                                entry.status === "failed" ? "bg-destructive text-white" :
-                                "bg-secondary text-foreground"
+                                  entry.status === "failed" ? "bg-destructive text-white" :
+                                    "bg-secondary text-foreground"
                               )}>
                                 <StatusIcon className={cn("w-4 h-4", entry.status === "processing" && "animate-spin")} />
                               </div>

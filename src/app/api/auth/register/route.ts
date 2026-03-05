@@ -7,8 +7,9 @@ import { createUserWithDefaults } from "@/lib/user-defaults";
 export async function POST(request: NextRequest) {
   try {
     const { name, email, password } = await request.json();
+    const normalizedEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
 
-    if (!name || !email || !password) {
+    if (!name || !normalizedEmail || !password) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -24,7 +25,9 @@ export async function POST(request: NextRequest) {
 
     // Check if user already exists
     const users = await getCollection<User>("users");
-    const existingUser = await users.findOne({ email });
+    const existingUser = await users.findOne({
+      email: { $regex: `^${normalizedEmail.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, $options: "i" },
+    });
 
     if (existingUser) {
       return NextResponse.json(
@@ -39,7 +42,7 @@ export async function POST(request: NextRequest) {
     // Create user with defaults
     const user = createUserWithDefaults({
       name,
-      email,
+      email: normalizedEmail,
       password: hashedPassword,
     });
 

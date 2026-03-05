@@ -46,7 +46,7 @@ export default function TemplatesPage() {
   const [formVariables, setFormVariables] = useState<string[]>([]);
   const [varInput, setVarInput] = useState("");
 
-  const filteredTemplates = templates.filter(tpl => 
+  const filteredTemplates = templates.filter(tpl =>
     tpl.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     tpl.content.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -136,7 +136,7 @@ export default function TemplatesPage() {
   };
 
   const TemplateCard = ({ tpl }: { tpl: Template }) => (
-    <div 
+    <div
       // variants={staggerItem}
       className="group bg-card border border-border rounded-3xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full relative overflow-hidden"
     >
@@ -208,9 +208,9 @@ export default function TemplatesPage() {
               <p className="text-sm text-muted-foreground mt-1">Design and manage your reusable communication components</p>
             </div>
           </div>
-          
+
           <div className="flex gap-3">
-             <Button variant="outline" className="rounded-2xl h-12 px-5 font-bold border-border bg-card/50" onClick={refetch} disabled={loading}>
+            <Button variant="outline" className="rounded-2xl h-12 px-5 font-bold border-border bg-card/50" onClick={refetch} disabled={loading}>
               <RefreshCw className={cn("w-4 h-4 mr-2", loading && "animate-spin")} />
               {loading ? "Syncing..." : "Refresh"}
             </Button>
@@ -224,8 +224,8 @@ export default function TemplatesPage() {
         <div className="flex flex-col md:flex-row gap-4">
           <div className="relative flex-1 group">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-            <Input 
-              placeholder="Search templates by name or content..." 
+            <Input
+              placeholder="Search templates by name or content..."
               className="pl-12 h-12 rounded-2xl border-border bg-card/30 focus-visible:ring-primary shadow-inner transition-all hover:bg-card/50"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -248,7 +248,7 @@ export default function TemplatesPage() {
               ))}
             </div>
           ) : filteredTemplates.length === 0 ? (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="text-center py-20 bg-secondary/20 border border-dashed border-border rounded-[3rem] space-y-5"
@@ -265,7 +265,7 @@ export default function TemplatesPage() {
               </Button>
             </motion.div>
           ) : (
-            <motion.div 
+            <motion.div
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
               variants={staggerContainer}
               initial="hidden"
@@ -281,18 +281,18 @@ export default function TemplatesPage() {
 
       {/* Create/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-xl rounded-[2.5rem] bg-card border-border shadow-2xl p-0 overflow-hidden">
-          <div className="bg-primary/10 p-8 border-b border-primary/10 relative">
-             <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-                <Library className="w-24 h-24 text-primary" />
-             </div>
-             <DialogTitle className="text-3xl font-black text-foreground tracking-tight">
-               {editingTemplate ? "Refine Template" : "New Blueprint"}
-             </DialogTitle>
-             <p className="text-sm text-muted-foreground mt-1">Configure the structure and content of your component.</p>
+        <DialogContent className="max-w-xl rounded-[2.5rem] bg-card border-border shadow-2xl p-0 overflow-hidden flex flex-col max-h-[90vh]">
+          <div className="bg-primary/10 p-8 border-b border-primary/10 relative shrink-0">
+            <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+              <Library className="w-24 h-24 text-primary" />
+            </div>
+            <DialogTitle className="text-3xl font-black text-foreground tracking-tight">
+              {editingTemplate ? "Refine Template" : "New Blueprint"}
+            </DialogTitle>
+            <p className="text-sm text-muted-foreground mt-1">Configure the structure and content of your component.</p>
           </div>
 
-          <div className="p-8 space-y-6">
+          <div className="p-8 space-y-6 overflow-y-auto flex-1">
             <div className="space-y-2">
               <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/70">Blueprint Name</label>
               <Input
@@ -368,7 +368,7 @@ export default function TemplatesPage() {
               </div>
               <AnimatePresence>
                 {formVariables.length > 0 && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     className="flex gap-2 flex-wrap mt-3"
@@ -391,7 +391,7 @@ export default function TemplatesPage() {
             </div>
           </div>
 
-          <DialogFooter className="p-8 bg-secondary/20 border-t border-border flex items-center justify-between">
+          <DialogFooter className="p-8 bg-secondary/20 border-t border-border flex items-center justify-between shrink-0">
             <Button variant="ghost" onClick={() => setDialogOpen(false)} className="rounded-xl font-bold">
               Cancel
             </Button>

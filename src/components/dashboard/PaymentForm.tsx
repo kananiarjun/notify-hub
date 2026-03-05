@@ -117,7 +117,7 @@ export function PaymentForm({ amount, plan, onSuccess, onCancel }: PaymentFormPr
           >
             <div className="text-center space-y-2">
               <h2 className="text-2xl font-black tracking-tight">Secure Check-out</h2>
-              <p className="text-sm text-muted-foreground">Complete your transaction for <span className="text-foreground font-bold">${amount}</span></p>
+              <p className="text-sm text-muted-foreground">Complete your transaction for <span className="text-foreground font-bold">₹{amount}</span></p>
             </div>
 
             {/* Realistic Card Preview */}
@@ -171,7 +171,7 @@ export function PaymentForm({ amount, plan, onSuccess, onCancel }: PaymentFormPr
                   <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input 
                     id="name"
-                    placeholder="Arjun Kanani"
+                    placeholder="John Doe"
                     className="pl-10 h-12 rounded-xl bg-secondary/50 border-border/50 focus:border-primary/50 transition-all font-bold"
                     value={name}
                     onChange={(e) => setName(e.target.value)}

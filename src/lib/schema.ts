@@ -43,6 +43,57 @@ export interface Notification {
   userId: string;
 }
 
+export interface SmsLog {
+  _id?: string;
+  id: string;
+  recipient: string;
+  message?: string;
+  templateId?: string;
+  templateName?: string;
+  variables?: Record<string, any>;
+  status: string;
+  priority: string;
+  attempts: number;
+  error?: string;
+  tags: string[];
+  sentAt?: Date;
+  deliveredAt?: Date;
+  deliveryTimeline?: Array<{
+    timestamp: Date;
+    status: string;
+    details?: string;
+  }>;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string;
+}
+
+export interface EmailLog {
+  _id?: string;
+  id: string;
+  recipient: string;
+  subject?: string;
+  message?: string;
+  templateId?: string;
+  templateName?: string;
+  variables?: Record<string, any>;
+  status: string;
+  priority: string;
+  attempts: number;
+  error?: string;
+  tags: string[];
+  sentAt?: Date;
+  deliveredAt?: Date;
+  deliveryTimeline?: Array<{
+    timestamp: Date;
+    status: string;
+    details?: string;
+  }>;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string;
+}
+
 export interface Template {
   _id?: string;
   id: string; // Custom ID for compatibility

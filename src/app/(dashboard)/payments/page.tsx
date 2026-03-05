@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { 
-  CreditCard, 
-  History, 
-  Search, 
-  Download, 
-  ExternalLink, 
-  TrendingUp, 
-  DollarSign, 
+import {
+  CreditCard,
+  History,
+  Search,
+  Download,
+  ExternalLink,
+  TrendingUp,
+  DollarSign,
   Calendar,
   AlertCircle,
   CheckCircle2,
@@ -93,8 +93,8 @@ export default function PaymentsPage() {
     }
   };
 
-  const filteredPayments = payments.filter(p => 
-    p.transactionId?.toLowerCase().includes(search.toLowerCase()) || 
+  const filteredPayments = payments.filter(p =>
+    p.transactionId?.toLowerCase().includes(search.toLowerCase()) ||
     p.description?.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -121,13 +121,13 @@ export default function PaymentsPage() {
                 Initialize Fund Audit
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-xl p-0 border-none bg-transparent shadow-none overflow-hidden sm:rounded-[3rem]">
-              <div className="glass-card p-10 relative overflow-hidden">
+            <DialogContent className="max-w-xl p-0 border-none bg-transparent shadow-none overflow-hidden sm:rounded-[3rem] flex flex-col max-h-[90vh]">
+              <div className="glass-card p-10 relative overflow-y-auto flex-1">
                 <div className="absolute top-0 right-0 p-10 opacity-[0.03] rotate-12 pointer-events-none">
                   <CreditCard className="w-48 h-48" />
                 </div>
-                <PaymentForm 
-                  amount={49.00} 
+                <PaymentForm
+                  amount={49.00}
                   onSuccess={() => {
                     setOpen(false);
                     fetchPayments();
@@ -140,7 +140,7 @@ export default function PaymentsPage() {
         </div>
 
         {/* Stats Grid */}
-        <motion.div 
+        <motion.div
           variants={staggerContainer}
           initial="hidden"
           animate="show"
@@ -148,33 +148,23 @@ export default function PaymentsPage() {
         >
           <motion.div variants={staggerItem} className="glass-card p-8 rounded-[2.5rem] relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-6 opacity-[0.05] group-hover:scale-110 transition-transform duration-700">
-               <TrendingUp className="w-16 h-16" />
+              <TrendingUp className="w-16 h-16" />
             </div>
             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-2">Total Capital Flow</p>
             <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-black text-foreground">${(stats?.totalSpent ?? 0).toLocaleString()}</span>
-              <span className="text-xs font-bold text-emerald-500">USD</span>
+              <span className="text-4xl font-black text-foreground">₹{(stats?.totalSpent ?? 0).toLocaleString()}</span>
+              <span className="text-xs font-bold text-emerald-500">INR</span>
             </div>
           </motion.div>
 
           <motion.div variants={staggerItem} className="glass-card p-8 rounded-[2.5rem] relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-6 opacity-[0.05] group-hover:scale-110 transition-transform duration-700">
-               <CheckCircle2 className="w-16 h-16 text-emerald-500" />
+              <CheckCircle2 className="w-16 h-16 text-emerald-500" />
             </div>
             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-2">Authenticated Transactions</p>
             <div className="flex items-baseline gap-2">
               <span className="text-4xl font-black text-foreground">{stats?.completedCount || 0}</span>
               <span className="text-xs font-bold text-muted-foreground">EVENTS</span>
-            </div>
-          </motion.div>
-
-          <motion.div variants={staggerItem} className="glass-card p-8 rounded-[2.5rem] relative overflow-hidden group bg-gradient-to-br from-primary/5 to-transparent border-primary/10">
-            <div className="absolute top-0 right-0 p-6 opacity-[0.05] group-hover:scale-110 transition-transform duration-700">
-               <CreditCard className="w-16 h-16 text-primary" />
-            </div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-primary/60 mb-2">Primary Node Protocol</p>
-            <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-black text-foreground uppercase tracking-tighter">VISA • 4242</span>
             </div>
           </motion.div>
         </motion.div>
@@ -183,7 +173,7 @@ export default function PaymentsPage() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 lg:px-0">
           <div className="relative w-full sm:w-96 group">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-            <Input 
+            <Input
               placeholder="Search via Transaction Hash..."
               className="h-14 pl-12 pr-4 rounded-2xl bg-card/40 backdrop-blur-md border-border/60 focus:border-primary/50 transition-all font-medium"
               value={search}
@@ -238,7 +228,7 @@ export default function PaymentsPage() {
                       </tr>
                     ) : (
                       filteredPayments.map((payment) => (
-                        <motion.tr 
+                        <motion.tr
                           key={payment.id}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
@@ -259,7 +249,7 @@ export default function PaymentsPage() {
                           <td className="px-8 py-6">
                             <div className="space-y-1">
                               <p className="text-lg font-black text-foreground tracking-tight">
-                                ${payment.amount.toFixed(2)}
+                                ₹{payment.amount.toFixed(2)}
                               </p>
                               <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">
                                 {payment.cardBrand ? `${payment.cardBrand} •••• ${payment.cardLast4}` : "Digital Wallet"}
@@ -311,11 +301,11 @@ export default function PaymentsPage() {
           </div>
           <div className="flex items-center gap-6 opacity-40">
             <div className="text-[8px] font-black uppercase tracking-[0.3em] text-center">
-              PCI DSS<br/>COMPLIANT
+              PCI DSS<br />COMPLIANT
             </div>
             <div className="w-px h-8 bg-border" />
             <div className="text-[8px] font-black uppercase tracking-[0.3em] text-center">
-              SECURE<br/>SSL NODES
+              SECURE<br />SSL NODES
             </div>
           </div>
         </div>

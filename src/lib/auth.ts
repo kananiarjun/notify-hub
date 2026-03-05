@@ -3,6 +3,7 @@ import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { DefaultSession } from "next-auth";
+import { ObjectId } from "mongodb";
 import { getCollection } from "@/lib/mongodb";
 import type { User } from "@/lib/schema";
 
@@ -33,27 +34,54 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        // Find user in database using Prisma
+        const normalizedEmail = credentials.email.trim().toLowerCase();
+
+        // Find user in database
         const users = await getCollection<User>("users");
-        const user = await users.findOne({ email: credentials.email });
+        const user = await users.findOne({
+          email: { $regex: `^${normalizedEmail.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, $options: "i" },
+        });
 
         if (!user) {
           return null;
         }
 
-        // Verify password
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password as string,
-          user.password
-        );
+        const storedPassword =
+          typeof user.password === "string" && user.password.length > 0
+            ? user.password
+            : // Backward compatibility for legacy records.
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              ((user as any).passwordHash as string | undefined);
+
+        if (!storedPassword) {
+          return null;
+        }
+
+        const rawPassword = credentials.password as string;
+        const isBcryptHash = storedPassword.startsWith("$2");
+        const isPasswordValid = isBcryptHash
+          ? await bcrypt.compare(rawPassword, storedPassword)
+          : rawPassword === storedPassword;
 
         if (!isPasswordValid) {
           return null;
         }
 
+        const userId =
+          user.id ||
+          (typeof user._id === "string"
+            ? user._id
+            : user._id instanceof ObjectId
+              ? user._id.toHexString()
+              : undefined);
+
+        if (!userId) {
+          return null;
+        }
+
         return {
-          id: user.id,
-          email: user.email,
+          id: userId,
+          email: user.email?.toLowerCase(),
           name: user.name,
           role: user.role, // pass role
         };
