@@ -28,6 +28,7 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
+
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
           return null;
@@ -35,21 +36,26 @@ export const authOptions: NextAuthOptions = {
 
         const normalizedEmail = credentials.email.trim().toLowerCase();
 
-        // Find user in database
+        // Get users collection
         const users = await getCollection<User>("users");
+
+        // Find user
         const user = await users.findOne({
-          email: { $regex: `^${normalizedEmail.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, $options: "i" },
+          email: {
+            $regex: `^${normalizedEmail.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
+            $options: "i",
+          },
         });
 
         if (!user) {
           return null;
         }
 
+        // Handle password (bcrypt or legacy)
         const storedPassword =
           typeof user.password === "string" && user.password.length > 0
             ? user.password
-            : // Backward compatibility for legacy records.
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            : // backward compatibility
               ((user as any).passwordHash as string | undefined);
 
         if (!storedPassword) {
@@ -57,7 +63,9 @@ export const authOptions: NextAuthOptions = {
         }
 
         const rawPassword = credentials.password as string;
+
         const isBcryptHash = storedPassword.startsWith("$2");
+
         const isPasswordValid = isBcryptHash
           ? await bcrypt.compare(rawPassword, storedPassword)
           : rawPassword === storedPassword;
@@ -66,11 +74,8 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const userId =
-          user.id ||
-          (typeof user._id === "string"
-            ? user._id
-            : undefined);
+        // Fix for MongoDB ObjectId
+        const userId = user.id || user._id?.toString();
 
         if (!userId) {
           return null;
@@ -80,32 +85,36 @@ export const authOptions: NextAuthOptions = {
           id: userId,
           email: user.email?.toLowerCase(),
           name: user.name,
-          role: user.role, // pass role
+          role: user.role || "user",
         };
       },
     }),
   ],
+
   session: {
     strategy: "jwt",
   },
+
   pages: {
     signIn: "/login",
   },
+
   callbacks: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.role = user.role;
       }
+
       return token;
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
       }
+
       return session;
     },
   },
