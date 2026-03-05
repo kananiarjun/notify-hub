@@ -75,6 +75,19 @@ export const authOptions: NextAuthOptions = {
         }
 
         // Fix for MongoDB ObjectId
+        // const userId = user.id || user._id?.toString();
+
+        // if (!userId) {
+        //   return null;
+        // }
+
+        // return {
+        //   id: userId,
+        //   email: user.email?.toLowerCase(),
+        //   name: user.name,
+        //   role: user.role || "user",
+        // };
+
         const userId = user.id || user._id?.toString();
 
         if (!userId) {
