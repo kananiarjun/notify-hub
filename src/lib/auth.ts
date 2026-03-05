@@ -3,7 +3,6 @@ import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { DefaultSession } from "next-auth";
-import { ObjectId } from "mongodb";
 import { getCollection } from "@/lib/mongodb";
 import type { User } from "@/lib/schema";
 
@@ -71,9 +70,7 @@ export const authOptions: NextAuthOptions = {
           user.id ||
           (typeof user._id === "string"
             ? user._id
-            : user._id instanceof ObjectId
-              ? user._id.toHexString()
-              : undefined);
+            : undefined);
 
         if (!userId) {
           return null;
